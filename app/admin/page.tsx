@@ -7,6 +7,8 @@ type Appointment = {
   id: string;
   patient_name: string;
   phone: string;
+  age: number | null;
+  gender: string | null;
   appointment_date: string;
   appointment_time: string;
   service: string;
@@ -122,6 +124,8 @@ export default function AdminPage() {
     const headers = [
       "Patient Name",
       "Phone",
+      "Age",
+      "Gender",
       "Date",
       "Time",
       "Service",
@@ -131,6 +135,8 @@ export default function AdminPage() {
     const rows = filtered.map((a) => [
       a.patient_name,
       a.phone,
+      a.age ?? "",
+      a.gender ?? "",
       a.appointment_date,
       a.appointment_time,
       a.service,
@@ -238,6 +244,8 @@ export default function AdminPage() {
                 {([
                   ["patient_name", "Patient Name"],
                   ["phone", "Phone"],
+                  ["age", "Age"],
+                  ["gender", "Gender"],
                   ["appointment_date", "Date"],
                   ["appointment_time", "Time"],
                   ["service", "Service"],
@@ -260,13 +268,13 @@ export default function AdminPage() {
             <tbody>
               {fetching ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-slate-400">
+                  <td colSpan={10} className="px-4 py-8 text-center text-slate-400">
                     Loading appointments...
                   </td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-slate-400">
+                  <td colSpan={10} className="px-4 py-8 text-center text-slate-400">
                     No appointments found.
                   </td>
                 </tr>
@@ -277,6 +285,8 @@ export default function AdminPage() {
                       {a.patient_name}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">{a.phone}</td>
+                    <td className="px-4 py-3 whitespace-nowrap">{a.age ?? "—"}</td>
+                    <td className="px-4 py-3 whitespace-nowrap">{a.gender ?? "—"}</td>
                     <td className="px-4 py-3 whitespace-nowrap">{a.appointment_date}</td>
                     <td className="px-4 py-3 whitespace-nowrap">{a.appointment_time}</td>
                     <td className="px-4 py-3 whitespace-nowrap">{a.service}</td>

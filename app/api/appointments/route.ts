@@ -6,9 +6,26 @@ import { sendAppointmentWhatsApp } from "@/lib/whatsapp";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { patient_name, phone, appointment_date, appointment_time, service, message } = body;
+    const {
+      patient_name,
+      phone,
+      age,
+      gender,
+      appointment_date,
+      appointment_time,
+      service,
+      message,
+    } = body;
 
-    if (!patient_name || !phone || !appointment_date || !appointment_time || !service) {
+    if (
+      !patient_name ||
+      !phone ||
+      !age ||
+      !gender ||
+      !appointment_date ||
+      !appointment_time ||
+      !service
+    ) {
       return NextResponse.json(
         { error: "Missing required fields." },
         { status: 400 }
@@ -22,9 +39,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const ageNum = Number(age);
+    if (!Number.isFinite(ageNum) || ageNum <= 0 || ageNum > 120) {
+      return NextResponse.json(
+        { error: "Please enter a valid age." },
+        { status: 400 }
+      );
+    }
+
+    const allowedGenders = ["Male", "Female", "Other"];
+    if (!allowedGenders.includes(gender)) {
+      return NextResponse.json(
+        { error: "Please select a valid gender." },
+        { status: 400 }
+      );
+    }
+
     const { error } = await supabaseAdmin.from("appointments").insert({
       patient_name: String(patient_name).trim(),
       phone: String(phone).trim(),
+      age: ageNum,
+      gender: String(gender).trim(),
       appointment_date,
       appointment_time,
       service,
@@ -45,6 +80,8 @@ export async function POST(req: NextRequest) {
       await sendAppointmentEmail({
         patient_name: String(patient_name).trim(),
         phone: String(phone).trim(),
+        age: ageNum,
+        gender: String(gender).trim(),
         appointment_date,
         appointment_time,
         service,
@@ -59,6 +96,8 @@ export async function POST(req: NextRequest) {
       await sendAppointmentWhatsApp({
         patient_name: String(patient_name).trim(),
         phone: String(phone).trim(),
+        age: ageNum,
+        gender: String(gender).trim(),
         appointment_date,
         appointment_time,
         service,

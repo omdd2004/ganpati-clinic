@@ -26,8 +26,8 @@ export default function Navbar() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        scrolled ? "glass shadow-glass border-b border-slate-100" : "bg-transparent"
+        "fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300",
+        scrolled ? "shadow-glass border-b border-slate-100" : "border-b border-transparent"
       )}
     >
       <nav className="container-px mx-auto flex h-16 md:h-20 max-w-7xl items-center justify-between">
@@ -77,7 +77,7 @@ export default function Navbar() {
       </nav>
 
       {open && (
-        <div className="md:hidden glass border-t border-slate-100 px-6 py-4 flex flex-col gap-4 animate-fade-in">
+        <div className="md:hidden bg-white border-t border-slate-100 px-6 py-4 flex flex-col gap-4 animate-fade-in">
           {links.map((link) => (
             <a
               key={link.href}

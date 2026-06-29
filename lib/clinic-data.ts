@@ -2,8 +2,8 @@ export const CLINIC = {
   name: "Ganpati Sonography & X-Ray Clinic",
   doctor: "Dr. Deepak Dandale",
   specialization: "Radiology & Diagnostic Imaging",
-  phone: "+918530951675",
-  phoneDisplay: "+91 85309 51675",
+  phone: "+919209608601",
+  phoneDisplay: "+91 92096 08601",
   addressLines: [
     "Municipal Staff Colony",
     "Behind Saijeevan Supershop",
@@ -32,3 +32,5 @@ export const SERVICES = [
   "Abdomen Sonography",
   "Other",
 ];
+
+export const GENDERS = ["Male", "Female", "Other"];

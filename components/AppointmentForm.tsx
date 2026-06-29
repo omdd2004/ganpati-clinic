@@ -1,13 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, Loader2, User, Phone, Calendar, Clock, Stethoscope, MessageSquare } from "lucide-react";
-import { SERVICES } from "@/lib/clinic-data";
+import {
+  CheckCircle2,
+  Loader2,
+  User,
+  Phone,
+  Calendar,
+  Clock,
+  Stethoscope,
+  MessageSquare,
+  Users,
+  Cake,
+} from "lucide-react";
+import { SERVICES, GENDERS } from "@/lib/clinic-data";
+import { getBookableDates, getBookableTimeSlots } from "@/lib/clinic-hours";
 
 type FormState = {
   patient_name: string;
   phone: string;
+  age: string;
+  gender: string;
   appointment_date: string;
   appointment_time: string;
   service: string;
@@ -17,6 +31,8 @@ type FormState = {
 const initialState: FormState = {
   patient_name: "",
   phone: "",
+  age: "",
+  gender: "",
   appointment_date: "",
   appointment_time: "",
   service: "",
@@ -30,8 +46,21 @@ export default function AppointmentForm() {
   const [success, setSuccess] = useState(false);
   const [serverError, setServerError] = useState("");
 
+  const bookableDates = useMemo(() => getBookableDates(), []);
+  const timeSlots = useMemo(
+    () => getBookableTimeSlots(form.appointment_date),
+    [form.appointment_date]
+  );
+
   function update<K extends keyof FormState>(key: K, value: string) {
-    setForm((f) => ({ ...f, [key]: value }));
+    setForm((f) => {
+      const next = { ...f, [key]: value };
+      // If the date changes, the previously selected time may no longer
+      // be valid for the new date's open hours — clear it to force a
+      // fresh, valid choice.
+      if (key === "appointment_date") next.appointment_time = "";
+      return next;
+    });
     setErrors((e) => ({ ...e, [key]: undefined }));
   }
 
@@ -40,6 +69,15 @@ export default function AppointmentForm() {
     if (!form.patient_name.trim()) newErrors.patient_name = "Please enter your name.";
     if (!/^[0-9+\s-]{10,15}$/.test(form.phone.trim()))
       newErrors.phone = "Please enter a valid mobile number.";
+    if (!form.age.trim()) {
+      newErrors.age = "Please enter age.";
+    } else {
+      const ageNum = Number(form.age);
+      if (!Number.isFinite(ageNum) || ageNum <= 0 || ageNum > 120) {
+        newErrors.age = "Please enter a valid age.";
+      }
+    }
+    if (!form.gender) newErrors.gender = "Please select gender.";
     if (!form.appointment_date) newErrors.appointment_date = "Please select a date.";
     if (!form.appointment_time) newErrors.appointment_time = "Please select a preferred time.";
     if (!form.service) newErrors.service = "Please select a service.";
@@ -58,7 +96,7 @@ export default function AppointmentForm() {
       const res = await fetch("/api/appointments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, age: Number(form.age) }),
       });
       const data = await res.json();
 
@@ -75,8 +113,6 @@ export default function AppointmentForm() {
       setSubmitting(false);
     }
   }
-
-  const today = new Date().toISOString().split("T")[0];
 
   return (
     <section id="appointment" className="py-20 md:py-28 bg-white">
@@ -127,11 +163,7 @@ export default function AppointmentForm() {
             </motion.div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-              <Field
-                label="Patient Name"
-                icon={User}
-                error={errors.patient_name}
-              >
+              <Field label="Patient Name" icon={User} error={errors.patient_name}>
                 <input
                   type="text"
                   value={form.patient_name}
@@ -141,34 +173,81 @@ export default function AppointmentForm() {
                 />
               </Field>
 
-              <Field label="Mobile Number" icon={Phone} error={errors.phone}>
-                <input
-                  type="tel"
-                  value={form.phone}
-                  onChange={(e) => update("phone", e.target.value)}
-                  placeholder="e.g. 9876543210"
-                  className={inputClass(!!errors.phone)}
-                />
+              <div className="grid sm:grid-cols-2 gap-5">
+                <Field label="Mobile Number" icon={Phone} error={errors.phone}>
+                  <input
+                    type="tel"
+                    value={form.phone}
+                    onChange={(e) => update("phone", e.target.value)}
+                    placeholder="e.g. 9876543210"
+                    className={inputClass(!!errors.phone)}
+                  />
+                </Field>
+
+                <Field label="Age" icon={Cake} error={errors.age}>
+                  <input
+                    type="number"
+                    min={1}
+                    max={120}
+                    value={form.age}
+                    onChange={(e) => update("age", e.target.value)}
+                    placeholder="e.g. 32"
+                    className={inputClass(!!errors.age)}
+                  />
+                </Field>
+              </div>
+
+              <Field label="Gender" icon={Users} error={errors.gender}>
+                <select
+                  value={form.gender}
+                  onChange={(e) => update("gender", e.target.value)}
+                  className={inputClass(!!errors.gender)}
+                >
+                  <option value="">Select gender</option>
+                  {GENDERS.map((g) => (
+                    <option key={g} value={g}>
+                      {g}
+                    </option>
+                  ))}
+                </select>
               </Field>
 
               <div className="grid sm:grid-cols-2 gap-5">
                 <Field label="Appointment Date" icon={Calendar} error={errors.appointment_date}>
-                  <input
-                    type="date"
-                    min={today}
+                  <select
                     value={form.appointment_date}
                     onChange={(e) => update("appointment_date", e.target.value)}
                     className={inputClass(!!errors.appointment_date)}
-                  />
+                  >
+                    <option value="">Select a date</option>
+                    {bookableDates.map((d) => (
+                      <option key={d.value} value={d.value}>
+                        {d.label}
+                      </option>
+                    ))}
+                  </select>
                 </Field>
 
                 <Field label="Preferred Time" icon={Clock} error={errors.appointment_time}>
-                  <input
-                    type="time"
+                  <select
                     value={form.appointment_time}
                     onChange={(e) => update("appointment_time", e.target.value)}
+                    disabled={!form.appointment_date}
                     className={inputClass(!!errors.appointment_time)}
-                  />
+                  >
+                    <option value="">
+                      {form.appointment_date
+                        ? timeSlots.length
+                          ? "Select a time"
+                          : "No slots left for this date"
+                        : "Select a date first"}
+                    </option>
+                    {timeSlots.map((t) => (
+                      <option key={t.value} value={t.value}>
+                        {t.label}
+                      </option>
+                    ))}
+                  </select>
                 </Field>
               </div>
 
@@ -219,7 +298,7 @@ export default function AppointmentForm() {
 
 function inputClass(hasError: boolean) {
   return [
-    "w-full rounded-xl border bg-white px-4 py-3 text-sm md:text-base text-slate-800 placeholder:text-slate-400 transition-colors",
+    "w-full rounded-xl border bg-white px-4 py-3 text-sm md:text-base text-slate-800 placeholder:text-slate-400 transition-colors disabled:bg-slate-50 disabled:text-slate-400",
     hasError
       ? "border-accent focus:border-accent"
       : "border-slate-200 focus:border-primary",

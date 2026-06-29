@@ -3,6 +3,8 @@ import nodemailer from "nodemailer";
 type AppointmentDetails = {
   patient_name: string;
   phone: string;
+  age: number;
+  gender: string;
   appointment_date: string;
   appointment_time: string;
   service: string;
@@ -50,6 +52,8 @@ export async function sendAppointmentEmail(details: AppointmentDetails) {
   const html = `
     <h2>New Appointment Booked</h2>
     <p><strong>Patient:</strong> ${escapeHtml(details.patient_name)}</p>
+    <p><strong>Age:</strong> ${escapeHtml(String(details.age))}</p>
+    <p><strong>Gender:</strong> ${escapeHtml(details.gender)}</p>
     <p><strong>Phone:</strong> ${escapeHtml(details.phone)}</p>
     <p><strong>Date:</strong> ${escapeHtml(details.appointment_date)}</p>
     <p><strong>Time:</strong> ${escapeHtml(details.appointment_time)}</p>

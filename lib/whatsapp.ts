@@ -1,6 +1,8 @@
 type AppointmentDetails = {
   patient_name: string;
   phone: string;
+  age: number;
+  gender: string;
   appointment_date: string;
   appointment_time: string;
   service: string;
@@ -27,6 +29,8 @@ export async function sendAppointmentWhatsApp(details: AppointmentDetails) {
   const body = [
     "📅 *New Appointment Booked!*",
     `*Patient:* ${details.patient_name}`,
+    `*Age:* ${details.age}`,
+    `*Gender:* ${details.gender}`,
     `*Phone:* ${details.phone}`,
     `*Date:* ${details.appointment_date}`,
     `*Time:* ${details.appointment_time}`,

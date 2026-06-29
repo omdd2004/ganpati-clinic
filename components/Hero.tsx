@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Activity, ScanLine, FileCheck2, Stethoscope, Phone, CalendarCheck } from "lucide-react";
 import { CLINIC } from "@/lib/clinic-data";
+import { isClinicOpenNow } from "@/lib/clinic-hours";
 
 const features = [
   { icon: Activity, label: "Sonography" },
@@ -14,12 +16,31 @@ const features = [
 const rings = [1, 2, 3, 4, 5, 6];
 
 export default function Hero() {
+  // null while we haven't checked the clock yet (avoids a server/client
+  // mismatch flash) — becomes true/false right after mount.
+  const [isOpen, setIsOpen] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    function check() {
+      setIsOpen(isClinicOpenNow());
+    }
+    check();
+    // Re-check every minute so the indicator flips live as hours change
+    const id = setInterval(check, 60 * 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Default to teal (neutral) until we know the real status, then green/red
+  const ringColor =
+    isOpen === null ? "rgba(95,194,205,0.45)" : isOpen ? "rgba(34,197,94,0.55)" : "rgba(220,38,38,0.55)";
+  const dotColor = isOpen === null ? "#0097A7" : isOpen ? "#22C55E" : "#DC2626";
+
   return (
     <section
       id="home"
       className="relative overflow-hidden pt-32 pb-20 md:pt-44 md:pb-28 bg-primary-dark"
     >
-      {/* Live animated radar / scan background */}
+      {/* Live animated radar / scan background — green when open, red when closed */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute right-[-180px] top-1/2 -translate-y-1/2 h-[640px] w-[640px] opacity-50">
           <svg viewBox="0 0 200 200" className="h-full w-full">
@@ -30,13 +51,13 @@ export default function Hero() {
                 cy="100"
                 r={14 + r * 13}
                 fill="none"
-                stroke="rgba(95,194,205,0.45)"
+                stroke={ringColor}
                 strokeWidth="0.6"
                 className="animate-radar-pulse"
-                style={{ animationDelay: `${r * 0.4}s` }}
+                style={{ animationDelay: `${r * 0.4}s`, transition: "stroke 0.6s ease" }}
               />
             ))}
-            <circle cx="100" cy="100" r="10" fill="#0097A7" opacity="0.6" />
+            <circle cx="100" cy="100" r="10" fill={dotColor} opacity="0.7" style={{ transition: "fill 0.6s ease" }} />
           </svg>
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-primary-dark/90 via-primary-dark/80 to-primary-dark" />
@@ -52,6 +73,23 @@ export default function Hero() {
           <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-medium text-teal-light">
             Radiology &amp; Diagnostic Imaging
           </span>
+
+          {isOpen !== null && (
+            <span
+              className={[
+                "ml-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium",
+                isOpen ? "bg-green-500/15 text-green-300" : "bg-red-500/15 text-red-300",
+              ].join(" ")}
+            >
+              <span
+                className={[
+                  "h-1.5 w-1.5 rounded-full",
+                  isOpen ? "bg-green-400" : "bg-red-400",
+                ].join(" ")}
+              />
+              {isOpen ? "Open Now" : "Currently Closed"}
+            </span>
+          )}
 
           <h1 className="mt-6 font-heading text-3xl md:text-5xl lg:text-6xl font-semibold leading-tight text-white">
             Trusted Sonography &amp; Digital X-Ray Centre in{" "}
