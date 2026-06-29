@@ -40,6 +40,42 @@ body {
       padding-right: 2.5rem;
     }
   }
+
+  /* Dot grid pattern for sections */
+  .dot-grid {
+    background-image: radial-gradient(circle, #0b3d9118 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* Light blue tinted section */
+  .section-blue {
+    background-color: #f0f5ff;
+  }
+
+  /* Shimmer animation for skeleton loader */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      #e8eef8 0%,
+      #f5f8ff 50%,
+      #e8eef8 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s infinite;
+  }
+
+  /* Glassmorphism hero card */
+  .glass-hero {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 input:focus, textarea:focus, select:focus {

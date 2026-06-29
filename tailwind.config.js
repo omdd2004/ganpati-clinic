@@ -40,6 +40,7 @@ module.exports = {
         "fade-up": "fadeUp 0.6s ease-out forwards",
         "fade-in": "fadeIn 0.6s ease-out forwards",
         "radar-pulse": "radarPulse 3.5s ease-out infinite",
+        shimmer: "shimmer 1.6s infinite",
       },
       keyframes: {
         fadeUp: {
@@ -54,6 +55,10 @@ module.exports = {
           "0%": { opacity: 0.85, transform: "scale(0.85)" },
           "70%": { opacity: 0.5 },
           "100%": { opacity: 0.15, transform: "scale(1.15)" },
+        },
+        shimmer: {
+          "0%": { backgroundPosition: "200% 0" },
+          "100%": { backgroundPosition: "-200% 0" },
         },
       },
     },

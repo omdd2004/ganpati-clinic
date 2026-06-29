@@ -6,8 +6,13 @@ import { CLINIC, WORKING_HOURS } from "@/lib/clinic-data";
 
 export default function ClinicInfo() {
   return (
-    <section id="contact" className="py-20 md:py-28 bg-surface-soft">
-      <div className="container-px mx-auto max-w-7xl">
+    <section id="contact" className="relative py-20 md:py-28 bg-white dot-grid overflow-hidden">
+      {/* Blue top glow — connects from wave divider above */}
+      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 h-40 w-2/3 bg-primary/5 blur-3xl rounded-full" />
+      {/* Teal bottom-right accent */}
+      <div className="pointer-events-none absolute bottom-0 right-0 h-64 w-64 bg-teal/5 blur-3xl rounded-full" />
+
+      <div className="container-px relative mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -15,6 +20,9 @@ export default function ClinicInfo() {
           transition={{ duration: 0.5 }}
           className="text-center max-w-2xl mx-auto mb-12"
         >
+          <p className="text-sm font-semibold uppercase tracking-widest text-teal mb-3">
+            Find Us
+          </p>
           <h2 className="font-heading text-2xl md:text-4xl font-semibold text-slate-900">
             Visit Our Clinic
           </h2>
@@ -38,9 +46,7 @@ export default function ClinicInfo() {
               </div>
               <div>
                 <p className="text-sm text-slate-500">Radiologist</p>
-                <p className="font-heading font-semibold text-slate-900">
-                  {CLINIC.doctor}
-                </p>
+                <p className="font-heading font-semibold text-slate-900">{CLINIC.doctor}</p>
                 <p className="text-sm text-slate-500">{CLINIC.specialization}</p>
               </div>
             </div>
@@ -52,9 +58,7 @@ export default function ClinicInfo() {
               <div>
                 <p className="text-sm text-slate-500">Address</p>
                 {CLINIC.addressLines.map((line) => (
-                  <p key={line} className="font-medium text-slate-800 leading-snug">
-                    {line}
-                  </p>
+                  <p key={line} className="font-medium text-slate-800 leading-snug">{line}</p>
                 ))}
               </div>
             </div>

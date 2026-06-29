@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import StatsSection from "@/components/StatsSection";
 import DoctorCredentials from "@/components/DoctorCredentials";
 import ClinicInfo from "@/components/ClinicInfo";
 import AppointmentForm from "@/components/AppointmentForm";
@@ -15,6 +16,7 @@ export default function Home() {
       <ScrollProgress />
       <Navbar />
       <Hero />
+      <StatsSection />
       <DoctorCredentials />
       <ClinicInfo />
       <AppointmentForm />

@@ -16,8 +16,6 @@ const features = [
 const rings = [1, 2, 3, 4, 5, 6];
 
 export default function Hero() {
-  // null while we haven't checked the clock yet (avoids a server/client
-  // mismatch flash) — becomes true/false right after mount.
   const [isOpen, setIsOpen] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -25,21 +23,29 @@ export default function Hero() {
       setIsOpen(isClinicOpenNow());
     }
     check();
-    // Re-check every minute so the indicator flips live as hours change
     const id = setInterval(check, 60 * 1000);
     return () => clearInterval(id);
   }, []);
 
-  // Default to teal (neutral) until we know the real status, then green/red
   const ringColor = isOpen === null ? "#3FC1D0" : isOpen ? "#22C55E" : "#FF2222";
   const dotColor  = isOpen === null ? "#3FC1D0" : isOpen ? "#22C55E" : "#FF2222";
 
   return (
     <section
       id="home"
-      className="relative overflow-hidden pt-32 pb-20 md:pt-44 md:pb-28 bg-primary-dark"
+      className="relative overflow-hidden pt-32 pb-0 md:pt-44 bg-primary-dark"
     >
-      {/* Live animated radar / scan background — green when open, red when closed */}
+      {/* Subtle noise grid overlay for glassmorphism depth */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)",
+          backgroundSize: "32px 32px",
+        }}
+      />
+
+      {/* Radar rings */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute right-[-180px] top-1/2 -translate-y-1/2 h-[480px] w-[480px]">
           <svg viewBox="0 0 200 200" className="h-full w-full">
@@ -63,7 +69,10 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-r from-primary-dark via-primary-dark/60 to-transparent" />
       </div>
 
-      <div className="container-px relative mx-auto max-w-7xl">
+      {/* Teal glow top-left */}
+      <div className="pointer-events-none absolute -top-32 -left-32 h-96 w-96 rounded-full bg-teal/10 blur-3xl" />
+
+      <div className="container-px relative mx-auto max-w-7xl pb-20 md:pb-28">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -83,7 +92,7 @@ export default function Hero() {
             >
               <span
                 className={[
-                  "h-1.5 w-1.5 rounded-full",
+                  "h-1.5 w-1.5 rounded-full animate-pulse",
                   isOpen ? "bg-green-400" : "bg-red-400",
                 ].join(" ")}
               />
@@ -119,6 +128,7 @@ export default function Hero() {
           </div>
         </motion.div>
 
+        {/* Glassmorphism feature cards */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -131,9 +141,9 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 + i * 0.08 }}
-              className="group flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-5 md:p-7 text-center shadow-card hover:bg-white/10 hover:-translate-y-1 transition-all duration-300"
+              className="group flex flex-col items-center gap-3 rounded-2xl glass-hero p-5 md:p-7 text-center hover:bg-white/10 hover:-translate-y-1 transition-all duration-300"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl gradient-primary text-white">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl gradient-primary text-white shadow-lg">
                 <f.icon className="h-6 w-6" />
               </div>
               <span className="text-sm md:text-base font-medium text-white/90">
@@ -142,6 +152,21 @@ export default function Hero() {
             </motion.div>
           ))}
         </motion.div>
+      </div>
+
+      {/* Wave divider — transitions hero into the next section */}
+      <div className="relative w-full overflow-hidden leading-none" style={{ height: "80px" }}>
+        <svg
+          viewBox="0 0 1440 80"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
+          className="absolute bottom-0 w-full h-full"
+        >
+          <path
+            d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z"
+            fill="#f0f5ff"
+          />
+        </svg>
       </div>
     </section>
   );
