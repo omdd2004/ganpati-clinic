@@ -78,34 +78,25 @@ npm run dev
 
 Visit `http://localhost:3000`. Admin dashboard: `http://localhost:3000/admin`.
 
-## 4. SMS Notifications (MSG91)
+## 4. Email Notifications (Resend)
 
-To receive an SMS whenever a patient books an appointment, this project uses [MSG91](https://msg91.com), an Indian SMS provider. Sending SMS to Indian mobile numbers legally requires a **DLT-registered sender ID and template** (a government-mandated anti-spam rule that applies to every SMS provider in India, not just MSG91).
+To receive an email whenever a patient books an appointment, this project uses [Resend](https://resend.com) — a simple email API with no business registration required (unlike SMS to Indian numbers, which needs DLT registration).
 
-1. Create an account at [msg91.com](https://msg91.com).
-2. **Register as a sender (DLT registration):**
-   - MSG91 guides you through DLT registration inside their dashboard (Settings → SMS → DLT). You'll register your clinic as an entity and get a 6-character **Sender ID** (e.g. `GNPATI`).
-   - This step is usually free and takes a few hours to a couple of days for approval.
-3. **Create an SMS template:**
-   - In MSG91 → SMS → Templates, create a template with placeholders, for example:
-     > New appointment booked! Patient: ##patient## Phone: ##phone## Date: ##date## Time: ##time## Service: ##service##
-   - Submit it for DLT approval (also via MSG91's dashboard). Once approved, copy the **Template ID**.
-4. **Get your Auth Key:**
-   - In MSG91 dashboard → API → Auth Key, copy your key.
-5. Add these environment variables (locally in `.env.local`, and in Vercel → Settings → Environment Variables):
+1. Create a free account at [resend.com](https://resend.com).
+2. Go to **API Keys** in the Resend dashboard → create a new key → copy it.
+3. Add these environment variables (locally in `.env.local`, and in Vercel → Settings → Environment Variables):
 
 ```
-MSG91_AUTH_KEY=your-auth-key
-MSG91_TEMPLATE_ID=your-approved-template-id
-MSG91_SENDER_ID=your-6-char-sender-id
-ADMIN_PHONE_NUMBER=918530951675   # no + sign, country code + number
+RESEND_API_KEY=your-resend-api-key
+ADMIN_EMAIL=youremail@example.com         # where alerts should be sent
+RESEND_FROM_EMAIL=onboarding@resend.dev   # works out of the box on the free plan
 ```
 
-6. Redeploy. Test by booking an appointment on the live site — an SMS should arrive at `ADMIN_PHONE_NUMBER` within seconds.
+4. Redeploy. Test by booking an appointment on the live site — an email should arrive at `ADMIN_EMAIL` within seconds.
 
-> If these variables aren't set, the website still works exactly the same — appointments still save normally, the SMS step is just skipped.
+> The default `onboarding@resend.dev` sender works immediately with no setup, great for getting started. Once you want emails to come from your own domain (e.g. `appointments@ganpatisonography.in`), verify that domain in Resend → Domains, then update `RESEND_FROM_EMAIL` accordingly.
 >
-> If your approved template uses different placeholder names than `patient`, `phone`, `date`, `time`, `service`, update the `recipients` object in `lib/sms.ts` to match exactly what your template expects.
+> If these variables aren't set, the website still works exactly the same — appointments still save normally, the email step is just skipped.
 
 ## 5. Deploy to Vercel
 
