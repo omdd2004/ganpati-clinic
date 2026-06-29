@@ -13,7 +13,6 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "@supabase/supabase-js": "^2.45.4",
-    "twilio": "^5.3.4",
     "framer-motion": "^11.11.9",
     "lucide-react": "^0.453.0",
     "clsx": "^2.1.1",
