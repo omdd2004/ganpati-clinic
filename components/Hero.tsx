@@ -31,9 +31,8 @@ export default function Hero() {
   }, []);
 
   // Default to teal (neutral) until we know the real status, then green/red
-  const ringColor =
-    isOpen === null ? "rgba(95,194,205,0.85)" : isOpen ? "rgba(34,197,94,0.9)" : "rgba(220,38,38,0.9)";
-  const dotColor = isOpen === null ? "#0097A7" : isOpen ? "#22C55E" : "#DC2626";
+  const ringColor = isOpen === null ? "#3FC1D0" : isOpen ? "#22C55E" : "#FF2222";
+  const dotColor  = isOpen === null ? "#3FC1D0" : isOpen ? "#22C55E" : "#FF2222";
 
   return (
     <section
@@ -52,15 +51,16 @@ export default function Hero() {
                 r={14 + r * 13}
                 fill="none"
                 stroke={ringColor}
-                strokeWidth="1.2"
+                strokeWidth="2"
+                opacity="0.85"
                 className="animate-radar-pulse"
                 style={{ animationDelay: `${r * 0.4}s`, transition: "stroke 0.6s ease" }}
               />
             ))}
-            <circle cx="100" cy="100" r="10" fill={dotColor} opacity="0.7" style={{ transition: "fill 0.6s ease" }} />
+            <circle cx="100" cy="100" r="10" fill={dotColor} opacity="0.95" style={{ transition: "fill 0.6s ease" }} />
           </svg>
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-primary-dark/95 via-primary-dark/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-dark via-primary-dark/60 to-transparent" />
       </div>
 
       <div className="container-px relative mx-auto max-w-7xl">
