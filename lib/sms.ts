@@ -6,45 +6,59 @@ type AppointmentDetails = {
   service: string;
 };
 
+/**
+ * Sends an SMS to the clinic's admin number via MSG91 whenever a new
+ * appointment is booked. Requires a DLT-approved SMS template in MSG91
+ * (mandatory for sending SMS to Indian numbers) — see README for setup.
+ */
 export async function sendAppointmentSMS(details: AppointmentDetails) {
-  const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const authToken = process.env.TWILIO_AUTH_TOKEN;
-  const fromNumber = process.env.TWILIO_FROM_NUMBER;
+  const authKey = process.env.MSG91_AUTH_KEY;
+  const templateId = process.env.MSG91_TEMPLATE_ID;
+  const senderId = process.env.MSG91_SENDER_ID;
   const adminNumber = process.env.ADMIN_PHONE_NUMBER;
 
   // If SMS isn't configured, silently skip — booking still succeeds.
-  if (!accountSid || !authToken || !fromNumber || !adminNumber) {
-    console.log("SMS notification skipped: Twilio not configured.");
+  if (!authKey || !templateId || !senderId || !adminNumber) {
+    console.log("SMS notification skipped: MSG91 not configured.");
     return;
   }
 
-  const body = [
-    "New appointment booked!",
-    `Patient: ${details.patient_name}`,
-    `Phone: ${details.phone}`,
-    `Date: ${details.appointment_date}`,
-    `Time: ${details.appointment_time}`,
-    `Service: ${details.service}`,
-  ].join("\n");
+  // Strip a leading "+" and any non-digit characters; MSG91 expects numbers
+  // like "919876543210" (country code + number, no plus sign).
+  const mobile = adminNumber.replace(/[^0-9]/g, "");
 
-  const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
-  const credentials = Buffer.from(`${accountSid}:${authToken}`).toString("base64");
-
-  const res = await fetch(url, {
+  const res = await fetch("https://control.msg91.com/api/v5/flow/", {
     method: "POST",
     headers: {
-      Authorization: `Basic ${credentials}`,
-      "Content-Type": "application/x-www-form-urlencoded",
+      authkey: authKey,
+      "Content-Type": "application/json",
     },
-    body: new URLSearchParams({
-      To: adminNumber,
-      From: fromNumber,
-      Body: body,
+    body: JSON.stringify({
+      template_id: templateId,
+      sender: senderId,
+      short_url: "0",
+      recipients: [
+        {
+          mobiles: mobile,
+          // These variable names must match the placeholders defined in
+          // your approved MSG91 DLT template (e.g. ##patient##, ##date##).
+          patient: details.patient_name,
+          phone: details.phone,
+          date: details.appointment_date,
+          time: details.appointment_time,
+          service: details.service,
+        },
+      ],
     }),
   });
 
   if (!res.ok) {
     const errorText = await res.text();
-    throw new Error(`Twilio API error (${res.status}): ${errorText}`);
+    throw new Error(`MSG91 API error (${res.status}): ${errorText}`);
+  }
+
+  const data = await res.json();
+  if (data.type === "error") {
+    throw new Error(`MSG91 API error: ${JSON.stringify(data)}`);
   }
 }

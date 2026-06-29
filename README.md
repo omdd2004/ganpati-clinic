@@ -78,27 +78,34 @@ npm run dev
 
 Visit `http://localhost:3000`. Admin dashboard: `http://localhost:3000/admin`.
 
-## 4. SMS Notifications (Twilio)
+## 4. SMS Notifications (MSG91)
 
-To receive an SMS whenever a patient books an appointment:
+To receive an SMS whenever a patient books an appointment, this project uses [MSG91](https://msg91.com), an Indian SMS provider. Sending SMS to Indian mobile numbers legally requires a **DLT-registered sender ID and template** (a government-mandated anti-spam rule that applies to every SMS provider in India, not just MSG91).
 
-1. Create a free account at [twilio.com](https://www.twilio.com/try-twilio).
-2. Get a Twilio phone number (free trial includes one).
-3. From the Twilio Console dashboard, copy your **Account SID** and **Auth Token**.
-4. Add these environment variables (locally in `.env.local`, and in Vercel → Settings → Environment Variables):
+1. Create an account at [msg91.com](https://msg91.com).
+2. **Register as a sender (DLT registration):**
+   - MSG91 guides you through DLT registration inside their dashboard (Settings → SMS → DLT). You'll register your clinic as an entity and get a 6-character **Sender ID** (e.g. `GNPATI`).
+   - This step is usually free and takes a few hours to a couple of days for approval.
+3. **Create an SMS template:**
+   - In MSG91 → SMS → Templates, create a template with placeholders, for example:
+     > New appointment booked! Patient: ##patient## Phone: ##phone## Date: ##date## Time: ##time## Service: ##service##
+   - Submit it for DLT approval (also via MSG91's dashboard). Once approved, copy the **Template ID**.
+4. **Get your Auth Key:**
+   - In MSG91 dashboard → API → Auth Key, copy your key.
+5. Add these environment variables (locally in `.env.local`, and in Vercel → Settings → Environment Variables):
 
 ```
-TWILIO_ACCOUNT_SID=your-account-sid
-TWILIO_AUTH_TOKEN=your-auth-token
-TWILIO_FROM_NUMBER=+1xxxxxxxxxx   # the Twilio number you were given
-ADMIN_PHONE_NUMBER=+918530951675  # the clinic's number that should receive alerts
+MSG91_AUTH_KEY=your-auth-key
+MSG91_TEMPLATE_ID=your-approved-template-id
+MSG91_SENDER_ID=your-6-char-sender-id
+ADMIN_PHONE_NUMBER=918530951675   # no + sign, country code + number
 ```
 
-5. Redeploy. Test by booking an appointment on the live site — an SMS should arrive at `ADMIN_PHONE_NUMBER` within seconds.
+6. Redeploy. Test by booking an appointment on the live site — an SMS should arrive at `ADMIN_PHONE_NUMBER` within seconds.
 
-> On Twilio's free trial, you can only send SMS to phone numbers you've verified in the Twilio Console (Console → Phone Numbers → Verified Caller IDs). Upgrade to a paid Twilio plan to send to any number without this restriction.
->
 > If these variables aren't set, the website still works exactly the same — appointments still save normally, the SMS step is just skipped.
+>
+> If your approved template uses different placeholder names than `patient`, `phone`, `date`, `time`, `service`, update the `recipients` object in `lib/sms.ts` to match exactly what your template expects.
 
 ## 5. Deploy to Vercel
 
