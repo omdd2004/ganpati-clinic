@@ -41,14 +41,14 @@ export default function Hero() {
     >
       {/* Live animated radar / scan background — green when open, red when closed */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute right-[-180px] top-1/2 -translate-y-1/2 h-[640px] w-[640px]">
+        <div className="absolute right-[-180px] top-1/2 -translate-y-1/2 h-[480px] w-[480px]">
           <svg viewBox="0 0 200 200" className="h-full w-full">
             {rings.map((r) => (
               <circle
                 key={r}
                 cx="100"
                 cy="100"
-                r={14 + r * 13}
+                r={10 + r * 10}
                 fill="none"
                 stroke={ringColor}
                 strokeWidth="2"
@@ -57,7 +57,7 @@ export default function Hero() {
                 style={{ animationDelay: `${r * 0.4}s`, transition: "stroke 0.6s ease" }}
               />
             ))}
-            <circle cx="100" cy="100" r="10" fill={dotColor} opacity="0.95" style={{ transition: "fill 0.6s ease" }} />
+            <circle cx="100" cy="100" r="5" fill={dotColor} opacity="0.95" style={{ transition: "fill 0.6s ease" }} />
           </svg>
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-primary-dark via-primary-dark/60 to-transparent" />
