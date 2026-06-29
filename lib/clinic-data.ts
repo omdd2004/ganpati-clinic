@@ -19,7 +19,7 @@ export const CLINIC = {
 // Edit these to match Dr. Dandale's real qualifications and experience.
 export const DOCTOR_CREDENTIALS = {
   name: "Dr. Deepak Dandale",
-  qualifications: "MBBS, DMRD (Radiodiagnosis)",
+  qualifications: "MBBS, DMRD (Radiologist)",
   experience: "25 Years of Excellence",
   registration: "Maharashtra Medical Council Reg. No. XXXXXX",
   bio: "Dr. Deepak Dandale is a qualified radiologist (MBBS, DMRD) with 25 years of excellence in sonography and digital X-ray diagnostics, dedicated to providing accurate, timely reports with a patient-first approach.",
