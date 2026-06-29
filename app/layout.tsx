@@ -50,6 +50,10 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+export const viewport = {
+  themeColor: "#0B3D91",
+};
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "MedicalClinic",
