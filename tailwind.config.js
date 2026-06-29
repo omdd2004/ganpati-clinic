@@ -52,8 +52,8 @@ module.exports = {
         },
         radarPulse: {
           "0%": { opacity: 0.9, transform: "scale(0.85)" },
-          "70%": { opacity: 0.15 },
-          "100%": { opacity: 0, transform: "scale(1.15)" },
+          "70%": { opacity: 0.55 },
+          "100%": { opacity: 0.2, transform: "scale(1.15)" },
         },
       },
     },
