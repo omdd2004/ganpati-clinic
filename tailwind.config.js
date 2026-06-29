@@ -39,6 +39,7 @@ module.exports = {
       animation: {
         "fade-up": "fadeUp 0.6s ease-out forwards",
         "fade-in": "fadeIn 0.6s ease-out forwards",
+        "radar-pulse": "radarPulse 3.5s ease-out infinite",
       },
       keyframes: {
         fadeUp: {
@@ -48,6 +49,11 @@ module.exports = {
         fadeIn: {
           "0%": { opacity: 0 },
           "100%": { opacity: 1 },
+        },
+        radarPulse: {
+          "0%": { opacity: 0.9, transform: "scale(0.85)" },
+          "70%": { opacity: 0.15 },
+          "100%": { opacity: 0, transform: "scale(1.15)" },
         },
       },
     },

@@ -78,7 +78,29 @@ npm run dev
 
 Visit `http://localhost:3000`. Admin dashboard: `http://localhost:3000/admin`.
 
-## 4. Deploy to Vercel
+## 4. SMS Notifications (Twilio)
+
+To receive an SMS whenever a patient books an appointment:
+
+1. Create a free account at [twilio.com](https://www.twilio.com/try-twilio).
+2. Get a Twilio phone number (free trial includes one).
+3. From the Twilio Console dashboard, copy your **Account SID** and **Auth Token**.
+4. Add these environment variables (locally in `.env.local`, and in Vercel → Settings → Environment Variables):
+
+```
+TWILIO_ACCOUNT_SID=your-account-sid
+TWILIO_AUTH_TOKEN=your-auth-token
+TWILIO_FROM_NUMBER=+1xxxxxxxxxx   # the Twilio number you were given
+ADMIN_PHONE_NUMBER=+918530951675  # the clinic's number that should receive alerts
+```
+
+5. Redeploy. Test by booking an appointment on the live site — an SMS should arrive at `ADMIN_PHONE_NUMBER` within seconds.
+
+> On Twilio's free trial, you can only send SMS to phone numbers you've verified in the Twilio Console (Console → Phone Numbers → Verified Caller IDs). Upgrade to a paid Twilio plan to send to any number without this restriction.
+>
+> If these variables aren't set, the website still works exactly the same — appointments still save normally, the SMS step is just skipped.
+
+## 5. Deploy to Vercel
 
 1. Push this project to a GitHub repository.
 2. Go to [vercel.com/new](https://vercel.com/new) and import the repository.

@@ -11,15 +11,36 @@ const features = [
   { icon: Stethoscope, label: "Experienced Radiologist" },
 ];
 
+const rings = [1, 2, 3, 4, 5, 6];
+
 export default function Hero() {
   return (
     <section
       id="home"
-      className="relative overflow-hidden pt-32 pb-20 md:pt-44 md:pb-28 bg-gradient-to-b from-pink-light/40 via-white to-white"
+      className="relative overflow-hidden pt-32 pb-20 md:pt-44 md:pb-28 bg-primary-dark"
     >
-      {/* Decorative gradient blobs */}
-      <div className="pointer-events-none absolute -top-24 -right-24 h-80 w-80 rounded-full bg-teal/10 blur-3xl" />
-      <div className="pointer-events-none absolute top-40 -left-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
+      {/* Live animated radar / scan background */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute right-[-180px] top-1/2 -translate-y-1/2 h-[640px] w-[640px] opacity-50">
+          <svg viewBox="0 0 200 200" className="h-full w-full">
+            {rings.map((r) => (
+              <circle
+                key={r}
+                cx="100"
+                cy="100"
+                r={14 + r * 13}
+                fill="none"
+                stroke="rgba(95,194,205,0.45)"
+                strokeWidth="0.6"
+                className="animate-radar-pulse"
+                style={{ animationDelay: `${r * 0.4}s` }}
+              />
+            ))}
+            <circle cx="100" cy="100" r="10" fill="#0097A7" opacity="0.6" />
+          </svg>
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-primary-dark/90 via-primary-dark/80 to-primary-dark" />
+      </div>
 
       <div className="container-px relative mx-auto max-w-7xl">
         <motion.div
@@ -28,16 +49,16 @@ export default function Hero() {
           transition={{ duration: 0.6 }}
           className="mx-auto max-w-3xl text-center"
         >
-          <span className="inline-flex items-center gap-2 rounded-full bg-teal/10 px-4 py-1.5 text-xs font-medium text-teal">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-medium text-teal-light">
             Radiology &amp; Diagnostic Imaging
           </span>
 
-          <h1 className="mt-6 font-heading text-3xl md:text-5xl lg:text-6xl font-semibold leading-tight text-slate-900">
+          <h1 className="mt-6 font-heading text-3xl md:text-5xl lg:text-6xl font-semibold leading-tight text-white">
             Trusted Sonography &amp; Digital X-Ray Centre in{" "}
-            <span className="text-gradient">Bhusawal</span>
+            <span className="text-teal-light">Bhusawal</span>
           </h1>
 
-          <p className="mt-6 text-base md:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-6 text-base md:text-lg text-white/75 max-w-2xl mx-auto leading-relaxed">
             Providing accurate diagnostic imaging with modern equipment and
             compassionate patient care.
           </p>
@@ -45,14 +66,14 @@ export default function Hero() {
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href="#appointment"
-              className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm md:text-base font-medium text-white shadow-card hover:shadow-card-hover hover:bg-primary-dark transition-all"
+              className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm md:text-base font-medium text-primary shadow-card hover:shadow-card-hover transition-all"
             >
               <CalendarCheck className="h-5 w-5" />
               Book Appointment
             </a>
             <a
               href={`tel:${CLINIC.phone}`}
-              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm md:text-base font-medium text-primary shadow-sm hover:border-primary/30 hover:bg-pink-light/40 transition-all"
+              className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-7 py-3.5 text-sm md:text-base font-medium text-white hover:bg-white/10 transition-all"
             >
               <Phone className="h-5 w-5" />
               Call Now
@@ -72,12 +93,12 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 + i * 0.08 }}
-              className="group flex flex-col items-center gap-3 rounded-2xl border border-slate-100 bg-white p-5 md:p-7 text-center shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300"
+              className="group flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-5 md:p-7 text-center shadow-card hover:bg-white/10 hover:-translate-y-1 transition-all duration-300"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-xl gradient-primary text-white">
                 <f.icon className="h-6 w-6" />
               </div>
-              <span className="text-sm md:text-base font-medium text-slate-700">
+              <span className="text-sm md:text-base font-medium text-white/90">
                 {f.label}
               </span>
             </motion.div>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { sendAppointmentSMS } from "@/lib/sms";
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,6 +36,20 @@ export async function POST(req: NextRequest) {
         { error: "Could not save appointment. Please try again." },
         { status: 500 }
       );
+    }
+
+    // Notify the clinic by SMS. This never blocks or fails the booking —
+    // if SMS sending has an issue, the appointment is still saved.
+    try {
+      await sendAppointmentSMS({
+        patient_name: String(patient_name).trim(),
+        phone: String(phone).trim(),
+        appointment_date,
+        appointment_time,
+        service,
+      });
+    } catch (smsError) {
+      console.error("SMS notification error:", smsError);
     }
 
     return NextResponse.json({ success: true }, { status: 201 });
