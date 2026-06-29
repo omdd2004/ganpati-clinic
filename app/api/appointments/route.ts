@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { sendAppointmentEmail } from "@/lib/email";
+import { sendAppointmentWhatsApp } from "@/lib/whatsapp";
 
 export async function POST(req: NextRequest) {
   try {
@@ -51,6 +52,19 @@ export async function POST(req: NextRequest) {
       });
     } catch (emailError) {
       console.error("Email notification error:", emailError);
+    }
+
+    // Notify the clinic by WhatsApp too. Also never blocks the booking.
+    try {
+      await sendAppointmentWhatsApp({
+        patient_name: String(patient_name).trim(),
+        phone: String(phone).trim(),
+        appointment_date,
+        appointment_time,
+        service,
+      });
+    } catch (whatsappError) {
+      console.error("WhatsApp notification error:", whatsappError);
     }
 
     return NextResponse.json({ success: true }, { status: 201 });

@@ -98,6 +98,27 @@ ADMIN_EMAIL=whoevershouldgetalerts@anyemail.com   # can be ANY email address
 
 > If these variables aren't set, the website still works exactly the same — appointments still save normally, the email step is just skipped.
 
+## 4.5 WhatsApp Notifications (Twilio Sandbox)
+
+For an additional instant alert via WhatsApp (alongside email), this project supports Twilio's free WhatsApp Sandbox.
+
+1. Create a free account at [twilio.com](https://www.twilio.com/try-twilio) if you don't have one.
+2. In the Twilio Console, go to **Messaging → Try it out → Send a WhatsApp message**. You'll see a sandbox number (e.g. `+1 415 523 8886`) and a join code (e.g. `join happy-tiger`).
+3. From the WhatsApp account that should *receive* alerts, send that exact join code (e.g. `join happy-tiger`) as a WhatsApp message to the sandbox number. This is a one-time step that links your number to the sandbox.
+4. Copy your **Account SID** and **Auth Token** from the Twilio Console dashboard.
+5. Add these environment variables (locally in `.env.local`, and in Vercel → Settings → Environment Variables):
+
+```
+TWILIO_ACCOUNT_SID=your-account-sid
+TWILIO_AUTH_TOKEN=your-auth-token
+TWILIO_WHATSAPP_FROM=whatsapp:+14155238886       # the sandbox number, with "whatsapp:" prefix
+ADMIN_WHATSAPP_NUMBER=whatsapp:+918530951675     # the number that joined the sandbox, same prefix
+```
+
+6. Redeploy. Test by booking an appointment — a WhatsApp message should arrive within seconds.
+
+> If the sandbox connection ever expires from inactivity, just resend the join code to reactivate it. If these variables aren't set, the website works exactly the same — the WhatsApp step is simply skipped.
+
 ## 5. Deploy to Vercel
 
 1. Push this project to a GitHub repository.
