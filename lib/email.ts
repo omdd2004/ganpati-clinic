@@ -1,3 +1,5 @@
+import nodemailer from "nodemailer";
+
 type AppointmentDetails = {
   patient_name: string;
   phone: string;
@@ -7,19 +9,41 @@ type AppointmentDetails = {
   message?: string | null;
 };
 
+let transporter: ReturnType<typeof nodemailer.createTransport> | null = null;
+
+function getTransporter() {
+  const gmailUser = process.env.GMAIL_USER;
+  const gmailAppPassword = process.env.GMAIL_APP_PASSWORD;
+
+  if (!gmailUser || !gmailAppPassword) {
+    return null;
+  }
+
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: gmailUser,
+        pass: gmailAppPassword,
+      },
+    });
+  }
+  return transporter;
+}
+
 /**
  * Sends an email to the clinic's admin inbox whenever a new appointment
- * is booked, using Resend (https://resend.com). No DLT/registration
- * required, unlike SMS to Indian numbers — just an API key.
+ * is booked, using Gmail SMTP (free, no domain or DLT registration needed,
+ * can send to any recipient address).
  */
 export async function sendAppointmentEmail(details: AppointmentDetails) {
-  const apiKey = process.env.RESEND_API_KEY;
+  const mailer = getTransporter();
   const toEmail = process.env.ADMIN_EMAIL;
-  const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+  const gmailUser = process.env.GMAIL_USER;
 
   // If email isn't configured, silently skip — booking still succeeds.
-  if (!apiKey || !toEmail) {
-    console.log("Email notification skipped: Resend not configured.");
+  if (!mailer || !toEmail || !gmailUser) {
+    console.log("Email notification skipped: Gmail SMTP not configured.");
     return;
   }
 
@@ -33,24 +57,12 @@ export async function sendAppointmentEmail(details: AppointmentDetails) {
     ${details.message ? `<p><strong>Message:</strong> ${escapeHtml(details.message)}</p>` : ""}
   `;
 
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: fromEmail,
-      to: toEmail,
-      subject: `New Appointment: ${details.patient_name}`,
-      html,
-    }),
+  await mailer.sendMail({
+    from: `"Ganpati Sonography & X-Ray Clinic" <${gmailUser}>`,
+    to: toEmail,
+    subject: `New Appointment: ${details.patient_name}`,
+    html,
   });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Resend API error (${res.status}): ${errorText}`);
-  }
 }
 
 function escapeHtml(str: string) {

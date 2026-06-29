@@ -78,24 +78,24 @@ npm run dev
 
 Visit `http://localhost:3000`. Admin dashboard: `http://localhost:3000/admin`.
 
-## 4. Email Notifications (Resend)
+## 4. Email Notifications (Gmail SMTP)
 
-To receive an email whenever a patient books an appointment, this project uses [Resend](https://resend.com) — a simple email API with no business registration required (unlike SMS to Indian numbers, which needs DLT registration).
+To receive an email whenever a patient books an appointment, this project sends mail through your own Gmail account using an **App Password** — free, no domain or business registration needed, and you can send the alert to any email address.
 
-1. Create a free account at [resend.com](https://resend.com).
-2. Go to **API Keys** in the Resend dashboard → create a new key → copy it.
-3. Add these environment variables (locally in `.env.local`, and in Vercel → Settings → Environment Variables):
+1. **Turn on 2-Step Verification** on the Gmail account you want to send from (Google Account → Security → 2-Step Verification). This is required before Gmail will let you create an App Password.
+2. Go to [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords).
+3. Create a new App Password (name it anything, e.g. "Clinic Website").
+4. Google shows you a 16-character password — copy it.
+5. Add these environment variables (locally in `.env.local`, and in Vercel → Settings → Environment Variables):
 
 ```
-RESEND_API_KEY=your-resend-api-key
-ADMIN_EMAIL=youremail@example.com         # where alerts should be sent
-RESEND_FROM_EMAIL=onboarding@resend.dev   # works out of the box on the free plan
+GMAIL_USER=youraccount@gmail.com           # the Gmail account sending the alert
+GMAIL_APP_PASSWORD=xxxxxxxxxxxxxxxx        # the 16-character App Password (no spaces)
+ADMIN_EMAIL=whoevershouldgetalerts@anyemail.com   # can be ANY email address
 ```
 
-4. Redeploy. Test by booking an appointment on the live site — an email should arrive at `ADMIN_EMAIL` within seconds.
+6. Redeploy. Test by booking an appointment on the live site — an email should arrive at `ADMIN_EMAIL` within seconds.
 
-> The default `onboarding@resend.dev` sender works immediately with no setup, great for getting started. Once you want emails to come from your own domain (e.g. `appointments@ganpatisonography.in`), verify that domain in Resend → Domains, then update `RESEND_FROM_EMAIL` accordingly.
->
 > If these variables aren't set, the website still works exactly the same — appointments still save normally, the email step is just skipped.
 
 ## 5. Deploy to Vercel
