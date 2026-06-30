@@ -38,7 +38,7 @@ export default function ClinicInfo() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="rounded-3xl bg-white border border-slate-100 shadow-card p-7 md:p-9 space-y-7"
+            className="rounded-3xl bg-white border border-slate-100 shadow-layered card-highlight p-7 md:p-9 space-y-7"
           >
             <div className="flex items-start gap-4">
               <div className="flex h-11 w-11 flex-none items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -105,7 +105,7 @@ export default function ClinicInfo() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="rounded-3xl overflow-hidden border border-slate-100 shadow-card bg-white flex flex-col"
+            className="rounded-3xl overflow-hidden border border-slate-100 shadow-layered bg-white flex flex-col"
           >
             <div className="h-72 md:h-80 w-full">
               <iframe

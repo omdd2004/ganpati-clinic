@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import Loader from "@/components/Loader";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import ScrollProgress from "@/components/ScrollProgress";
+import HeartbeatDivider from "@/components/HeartbeatDivider";
 
 export default function Home() {
   return (
@@ -17,7 +18,9 @@ export default function Home() {
       <Navbar />
       <Hero />
       <StatsSection />
+      <HeartbeatDivider className="bg-white" />
       <DoctorCredentials />
+      <HeartbeatDivider className="section-blue" />
       <ClinicInfo />
       <AppointmentForm />
       <Footer />

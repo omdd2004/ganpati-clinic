@@ -74,7 +74,7 @@ function StatCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
-      className="flex flex-col items-center text-center px-6 py-8 rounded-3xl bg-white border border-slate-100 shadow-card hover:shadow-card-hover transition-shadow"
+      className="flex flex-col items-center text-center px-6 py-8 rounded-3xl bg-white border border-slate-100 shadow-layered shadow-layered-hover card-highlight transition-shadow"
     >
       <div className="flex h-14 w-14 items-center justify-center rounded-2xl gradient-primary text-white mb-4 shadow-md">
         <Icon className="h-7 w-7" />

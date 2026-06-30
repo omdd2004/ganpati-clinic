@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins, Inter } from "next/font/google";
 import RegisterSW from "@/components/RegisterSW";
 import PageTransition from "@/components/PageTransition";
+import CustomCursor from "@/components/CustomCursor";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -121,6 +122,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased">
+        <CustomCursor />
         <PageTransition>{children}</PageTransition>
         <RegisterSW />
       </body>

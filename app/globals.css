@@ -87,6 +87,35 @@ body {
     box-shadow: 0 0 0 4px rgba(11, 61, 145, 0.12);
   }
 
+  /* Layered shadow system — ambient + close shadow stacked for real depth */
+  .shadow-layered {
+    box-shadow:
+      0 1px 2px rgba(11, 61, 145, 0.04),
+      0 4px 10px rgba(11, 61, 145, 0.06),
+      0 16px 32px rgba(11, 61, 145, 0.08);
+  }
+  .shadow-layered-hover:hover {
+    box-shadow:
+      0 2px 4px rgba(11, 61, 145, 0.06),
+      0 8px 16px rgba(11, 61, 145, 0.10),
+      0 24px 48px rgba(11, 61, 145, 0.12);
+  }
+
+  /* Subtle top highlight to simulate light from above on cards */
+  .card-highlight {
+    position: relative;
+  }
+  .card-highlight::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 8%;
+    right: 8%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
+    border-radius: 999px;
+  }
+
   /* Button shine sweep */
   .btn-shine {
     position: relative;
@@ -143,6 +172,18 @@ body {
 html {
   scrollbar-color: #0097a7 #f0f5ff;
   scrollbar-width: thin;
+}
+
+/* Hide default cursor on desktop when our custom radar cursor is active */
+@media (pointer: fine) {
+  body.custom-cursor-active,
+  body.custom-cursor-active a,
+  body.custom-cursor-active button,
+  body.custom-cursor-active input,
+  body.custom-cursor-active select,
+  body.custom-cursor-active textarea {
+    cursor: none;
+  }
 }
 
 input:focus, textarea:focus, select:focus {

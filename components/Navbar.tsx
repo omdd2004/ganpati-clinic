@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Phone, Menu, X } from "lucide-react";
 import { CLINIC } from "@/lib/clinic-data";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,7 @@ const links = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [activeHref, setActiveHref] = useState("#home");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -23,11 +25,34 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Track which section is currently in view to drive the active nav indicator
+  useEffect(() => {
+    const sections = links
+      .map((l) => document.querySelector(l.href))
+      .filter(Boolean) as Element[];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveHref(`#${entry.target.id}`);
+          }
+        });
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 }
+    );
+
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300",
-        scrolled ? "shadow-glass border-b border-slate-100" : "border-b border-transparent"
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        scrolled
+          ? "bg-white/75 backdrop-blur-xl backdrop-saturate-150 shadow-layered border-b border-slate-100/80"
+          : "bg-white border-b border-transparent"
       )}
     >
       <nav className="container-px mx-auto flex h-16 md:h-20 max-w-7xl items-center justify-between">
@@ -45,16 +70,29 @@ export default function Navbar() {
           </span>
         </a>
 
-        <div className="hidden md:flex items-center gap-8">
-          {links.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium text-slate-600 hover:text-primary transition-colors"
-            >
-              {link.label}
-            </a>
-          ))}
+        <div className="hidden md:flex items-center gap-8 relative">
+          {links.map((link) => {
+            const isActive = activeHref === link.href;
+            return (
+              <a
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "relative text-sm font-medium transition-colors py-1",
+                  isActive ? "text-primary" : "text-slate-600 hover:text-primary"
+                )}
+              >
+                {link.label}
+                {isActive && (
+                  <motion.span
+                    layoutId="navIndicator"
+                    className="absolute left-0 right-0 -bottom-1 h-[2px] rounded-full bg-teal"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+              </a>
+            );
+          })}
         </div>
 
         <div className="hidden md:flex items-center gap-3">
@@ -77,13 +115,16 @@ export default function Navbar() {
       </nav>
 
       {open && (
-        <div className="md:hidden bg-white border-t border-slate-100 px-6 py-4 flex flex-col gap-4 animate-fade-in">
+        <div className="md:hidden bg-white/95 backdrop-blur-lg border-t border-slate-100 px-6 py-4 flex flex-col gap-4 animate-fade-in">
           {links.map((link) => (
             <a
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="text-base font-medium text-slate-700"
+              className={cn(
+                "text-base font-medium",
+                activeHref === link.href ? "text-primary" : "text-slate-700"
+              )}
             >
               {link.label}
             </a>
