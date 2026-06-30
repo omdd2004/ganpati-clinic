@@ -48,7 +48,9 @@ export default function CustomCursor() {
 
   return (
     <>
-      {/* Core dot — tracks instantly */}
+      {/* Core dot — tracks instantly. mix-blend-mode: difference makes it
+          auto-invert against any background (dark hero or white sections)
+          so it's always visible without needing manual color logic. */}
       <motion.div
         className="pointer-events-none fixed z-[10001] hidden md:block rounded-full"
         style={{
@@ -56,11 +58,12 @@ export default function CustomCursor() {
           top: y,
           x: "-50%",
           y: "-50%",
-          width: isPointer ? 6 : 7,
-          height: isPointer ? 6 : 7,
-          backgroundColor: isPointer ? "#3FC1D0" : "#0B3D91",
+          width: isPointer ? 8 : 8,
+          height: isPointer ? 8 : 8,
+          backgroundColor: "#ffffff",
+          mixBlendMode: "difference",
           opacity: visible ? 1 : 0,
-          transition: "width 0.2s ease, height 0.2s ease, background-color 0.2s ease, opacity 0.2s ease",
+          transition: "width 0.2s ease, height 0.2s ease, opacity 0.2s ease",
         }}
       />
       {/* Echo ring — lags slightly behind, pulses on hover */}
@@ -73,15 +76,17 @@ export default function CustomCursor() {
           y: "-50%",
           width: isPointer ? 44 : 28,
           height: isPointer ? 44 : 28,
-          borderColor: isPointer ? "#3FC1D0" : "#0B3D91",
+          borderColor: "#ffffff",
           borderWidth: 1.5,
-          opacity: visible ? (isPointer ? 0.7 : 0.4) : 0,
-          transition: "width 0.25s ease, height 0.25s ease, border-color 0.25s ease, opacity 0.25s ease",
+          mixBlendMode: "difference",
+          opacity: visible ? (isPointer ? 0.85 : 0.6) : 0,
+          transition: "width 0.25s ease, height 0.25s ease, opacity 0.25s ease",
         }}
       >
         {isPointer && (
           <motion.span
-            className="absolute inset-0 rounded-full border border-teal-light"
+            className="absolute inset-0 rounded-full border"
+            style={{ borderColor: "#ffffff", mixBlendMode: "difference" }}
             initial={{ scale: 1, opacity: 0.6 }}
             animate={{ scale: 1.6, opacity: 0 }}
             transition={{ duration: 1.2, repeat: Infinity, ease: "easeOut" }}
