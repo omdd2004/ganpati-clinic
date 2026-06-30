@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Inter } from "next/font/google";
 import RegisterSW from "@/components/RegisterSW";
+import PageTransition from "@/components/PageTransition";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -120,7 +121,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased">
-        {children}
+        <PageTransition>{children}</PageTransition>
         <RegisterSW />
       </body>
     </html>

@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { SERVICES, GENDERS } from "@/lib/clinic-data";
 import { getBookableDates, getBookableTimeSlots } from "@/lib/clinic-hours";
+import Confetti from "@/components/Confetti";
 
 type FormState = {
   patient_name: string; phone: string; age: string; gender: string;
@@ -116,6 +117,7 @@ export default function AppointmentForm() {
               animate={{ opacity: 1, scale: 1 }}
               className="flex flex-col items-center text-center gap-4 py-8"
             >
+              <Confetti />
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal/10 text-teal">
                 <CheckCircle2 className="h-9 w-9" />
               </div>
@@ -197,7 +199,7 @@ export default function AppointmentForm() {
 
 function inputClass(hasError: boolean) {
   return [
-    "w-full rounded-xl border bg-white px-4 py-3 text-sm md:text-base text-slate-800 placeholder:text-slate-400 transition-colors disabled:bg-slate-50 disabled:text-slate-400",
+    "focus-glow w-full rounded-xl border bg-white px-4 py-3 text-sm md:text-base text-slate-800 placeholder:text-slate-400 transition-all disabled:bg-slate-50 disabled:text-slate-400",
     hasError ? "border-accent focus:border-accent" : "border-slate-200 focus:border-primary",
   ].join(" ");
 }

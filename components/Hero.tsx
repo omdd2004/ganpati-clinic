@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useScroll, useTransform, useMotionValue } from "framer-motion";
 import { Activity, ScanLine, FileCheck2, Stethoscope, Phone, CalendarCheck } from "lucide-react";
 import { CLINIC } from "@/lib/clinic-data";
 import { isClinicOpenNow } from "@/lib/clinic-hours";
@@ -17,6 +17,16 @@ const rings = [1, 2, 3, 4, 5, 6];
 
 export default function Hero() {
   const [isOpen, setIsOpen] = useState<boolean | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Cursor-following glow
+  const mouseX = useMotionValue(50);
+  const mouseY = useMotionValue(50);
+
+  // Parallax: content moves up slightly slower than page scroll
+  const { scrollY } = useScroll();
+  const contentY = useTransform(scrollY, [0, 600], [0, -60]);
+  const bgY = useTransform(scrollY, [0, 600], [0, 40]);
 
   useEffect(() => {
     function check() {
@@ -27,26 +37,48 @@ export default function Hero() {
     return () => clearInterval(id);
   }, []);
 
+  function handleMouseMove(e: React.MouseEvent<HTMLElement>) {
+    const rect = sectionRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    mouseX.set(((e.clientX - rect.left) / rect.width) * 100);
+    mouseY.set(((e.clientY - rect.top) / rect.height) * 100);
+  }
+
   const ringColor = isOpen === null ? "#3FC1D0" : isOpen ? "#22C55E" : "#FF2222";
   const dotColor  = isOpen === null ? "#3FC1D0" : isOpen ? "#22C55E" : "#FF2222";
 
   return (
     <section
+      ref={sectionRef}
+      onMouseMove={handleMouseMove}
       id="home"
       className="relative overflow-hidden pt-32 pb-0 md:pt-44 bg-primary-dark"
     >
+      {/* Cursor-following glow */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 hidden md:block"
+        style={{
+          background: useTransform(
+            [mouseX, mouseY],
+            ([x, y]) =>
+              `radial-gradient(500px circle at ${x}% ${y}%, rgba(63,193,208,0.10), transparent 70%)`
+          ),
+        }}
+      />
+
       {/* Subtle noise grid overlay for glassmorphism depth */}
-      <div
+      <motion.div
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
             "radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)",
           backgroundSize: "32px 32px",
+          y: bgY,
         }}
       />
 
       {/* Radar rings */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <motion.div className="pointer-events-none absolute inset-0 overflow-hidden" style={{ y: bgY }}>
         <div className="absolute right-[-180px] top-1/2 -translate-y-1/2 h-[480px] w-[480px]">
           <svg viewBox="0 0 200 200" className="h-full w-full">
             {rings.map((r) => (
@@ -67,12 +99,12 @@ export default function Hero() {
           </svg>
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-primary-dark via-primary-dark/60 to-transparent" />
-      </div>
+      </motion.div>
 
       {/* Teal glow top-left */}
       <div className="pointer-events-none absolute -top-32 -left-32 h-96 w-96 rounded-full bg-teal/10 blur-3xl" />
 
-      <div className="container-px relative mx-auto max-w-7xl pb-20 md:pb-28">
+      <motion.div className="container-px relative mx-auto max-w-7xl pb-20 md:pb-28" style={{ y: contentY }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -102,7 +134,7 @@ export default function Hero() {
 
           <h1 className="mt-6 font-heading text-3xl md:text-5xl lg:text-6xl font-semibold leading-tight text-white">
             Trusted Sonography &amp; Digital X-Ray Centre in{" "}
-            <span className="text-teal-light">Bhusawal</span>
+            <span className="text-gradient-animated font-bold">Bhusawal</span>
           </h1>
 
           <p className="mt-6 text-base md:text-lg text-white/75 max-w-2xl mx-auto leading-relaxed">
@@ -113,7 +145,7 @@ export default function Hero() {
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href="#appointment"
-              className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm md:text-base font-medium text-primary shadow-card hover:shadow-card-hover transition-all"
+              className="btn-shine inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm md:text-base font-medium text-primary shadow-card hover:shadow-card-hover transition-all"
             >
               <CalendarCheck className="h-5 w-5" />
               Book Appointment
@@ -152,7 +184,7 @@ export default function Hero() {
             </motion.div>
           ))}
         </motion.div>
-      </div>
+      </motion.div>
 
       {/* Wave divider — transitions hero into the next section */}
       <div className="relative w-full overflow-hidden leading-none" style={{ height: "80px" }}>
